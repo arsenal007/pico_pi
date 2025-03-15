@@ -17,8 +17,7 @@ else()
 endif()
 
 set(sdkVersion 2.1.1)
-set(toolchainVersion 13_3_Rel1)
-set(picotoolVersion 2.1.0)
+set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/pico/pico-sdk/cmake/pico-vscode.cmake)
 
 if(EXISTS ${picoVscode})
@@ -35,7 +34,7 @@ message(STATUS "Using FreeRTOS Kernel Path: ${FREERTOS_KERNEL_PATH}")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
-include(FreeRTOS_Kernel_import.cmake)
+include(${FREERTOS_SOURCE_DIR}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
 # include(library.cmake)
 project(hello_freertos C CXX ASM)
@@ -57,7 +56,7 @@ if(TARGET tinyusb_device)
     )
 
     # pull in common dependencies
-    target_link_libraries(${CMAKE_PROJECT_NAME} pico_stdlib FreeRTOS-Kernel-Heap4)
+    target_link_libraries(${CMAKE_PROJECT_NAME} pico_stdlib FreeRTOS-Kernel-Static)
 
     # enable usb output, disable uart output
     pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)

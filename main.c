@@ -3,6 +3,9 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+StaticTask_t xTaskBuffer;
+StackType_t xStack[configMINIMAL_STACK_SIZE];
+
 uint32_t counter = 0;
 
 void hello_task(void *pvParameters)
@@ -19,7 +22,7 @@ int main()
 {
     stdio_init_all();
 
-    xTaskCreate(hello_task, "HelloTask", 256, NULL, 1, NULL);
+    xTaskCreateStatic(hello_task, "HelloTask", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, xStack, &xTaskBuffer);
 
     vTaskStartScheduler();
 
@@ -29,13 +32,6 @@ int main()
     }
 
     return 0;
-}
-
-void vApplicationMallocFailedHook(void)
-{
-    printf("ERROR: Malloc failed!\n");
-    while (1)
-        ;
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
