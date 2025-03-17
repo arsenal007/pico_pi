@@ -37,7 +37,7 @@ include(pico_sdk_import.cmake)
 include(${FREERTOS_SOURCE_DIR}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
 # include(library.cmake)
-project(hello_freertos C CXX ASM)
+project(pico_pi C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -53,10 +53,16 @@ include_directories(${CMAKE_SOURCE_DIR})
 if(TARGET tinyusb_device)
     add_executable(${CMAKE_PROJECT_NAME}
         ${CMAKE_SOURCE_DIR}/main.c
+        ${CMAKE_SOURCE_DIR}/usb-descriptors.c
     )
 
     # pull in common dependencies
-    target_link_libraries(${CMAKE_PROJECT_NAME} pico_stdlib FreeRTOS-Kernel-Static)
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        pico_stdlib
+        hardware_flash
+        tinyusb_device
+        FreeRTOS-Kernel-Static
+    )
 
     # enable usb output, disable uart output
     pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)
@@ -65,7 +71,7 @@ if(TARGET tinyusb_device)
     # create map/bin/hex/uf2 file etc.
     pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
 
-# add url via pico_set_program_url
+    # add url via pico_set_program_url
 elseif(PICO_ON_DEVICE)
     message("Skipping hello_serial because TinyUSB submodule is not initialized in the SDK")
 endif()
