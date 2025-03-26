@@ -1,46 +1,34 @@
-#include <stdio.h>
-#include <pico/stdlib.h>
 #include <FreeRTOS.h>
+#include <pico/bootrom.h>
+#include <pico/stdlib.h>
+#include <stdio.h>
 #include <task.h>
+#include <tasks/info_task.h>
+#include <tasks/usb_device_task.h>
 
-StaticTask_t xTaskBuffer;
-StackType_t xStack[configMINIMAL_STACK_SIZE];
+// #define LED_PIN 25
 
-uint32_t counter = 0;
+int main() {
+  create_info_task();
+  create_usb_device_task();
 
-void hello_task(void *pvParameters)
-{
-    while (1)
-    {
-        counter++;
-        printf("Hello world from FreeRTOS %u\n", counter);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+  bind_info_task_to_core0();
+  bind_usb_device_task_to_core0();
+
+  vTaskStartScheduler();
+
+  while (1) {
+    tight_loop_contents();
+  }
+
+  return 0;
 }
 
-int main()
-{
-    stdio_init_all();
-
-    xTaskCreateStatic(hello_task, "HelloTask", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, xStack, &xTaskBuffer);
-
-    vTaskStartScheduler();
-
-    while (1)
-    {
-        tight_loop_contents();
-    }
-
-    return 0;
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+  printf("ERROR: Stack overflow in task %s!\n", pcTaskName);
+  while (1) {
+    ;
+  };
 }
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-    printf("ERROR: Stack overflow in task %s!\n", pcTaskName);
-    while (1)
-        ;
-}
-
-void vApplicationTickHook(void)
-{
-}
+void vApplicationTickHook(void) {}

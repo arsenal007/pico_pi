@@ -18,7 +18,7 @@ endif()
 
 set(sdkVersion 2.1.1)
 set(picotoolVersion 2.1.1)
-set(picoVscode ${USERHOME}/pico/pico-sdk/cmake/pico-vscode.cmake)
+set(picoVscode ${USERHOME}/Projects/software/pico/pico-sdk/cmake/pico-vscode.cmake)
 
 if(EXISTS ${picoVscode})
     include(${picoVscode})
@@ -53,7 +53,9 @@ include_directories(${CMAKE_SOURCE_DIR})
 if(TARGET tinyusb_device)
     add_executable(${CMAKE_PROJECT_NAME}
         ${CMAKE_SOURCE_DIR}/main.c
-        ${CMAKE_SOURCE_DIR}/usb-descriptors.c
+        ${CMAKE_SOURCE_DIR}/usb_cdc/usb-descriptors.c
+        ${CMAKE_SOURCE_DIR}/tasks/usb_device_task.c
+        ${CMAKE_SOURCE_DIR}/tasks/info_task.c
     )
 
     # pull in common dependencies
@@ -61,10 +63,14 @@ if(TARGET tinyusb_device)
         pico_stdlib
         hardware_flash
         tinyusb_device
+        pico_bootrom
         FreeRTOS-Kernel-Static
     )
 
-    # enable usb output, disable uart output
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
+        PICO_ENTER_USB_BOOT_ON_EXIT=1
+    )
+
     pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)
     pico_enable_stdio_uart(${CMAKE_PROJECT_NAME} 1)
 

@@ -16,6 +16,10 @@
 #define CFG_TUD_CDC_RX_BUFSIZE 1024
 #define CFG_TUD_CDC_TX_BUFSIZE 1024
 
+#ifndef CFG_TUSB_OS
+#define CFG_TUSB_OS            OPT_OS_FREERTOS
+#endif
+
 void usbd_serial_init(void);
 
 #endif /* _TUSB_CONFIG_H_ */

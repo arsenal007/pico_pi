@@ -7,8 +7,6 @@
             "isBuildCommand": true,
             "command": "cmake",
             "args": [
-                "-DPICO_SDK_PATH=${env:HOME}/pico/pico-sdk",
-                "-DPICO_TOOLCHAIN_PATH=/usr/bin",
                 "-DPICO_BOARD=pico",
                 "-G",
                 "Ninja",
