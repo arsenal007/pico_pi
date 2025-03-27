@@ -1,6 +1,6 @@
 #include <FreeRTOS.h>
 #include <task.h>
-#include <tasks/usb_device_task.h>
+#include <tasks/usb_device.h>
 #include <tusb.h>
 
 #define STACK_SIZE configMINIMAL_STACK_SIZE
@@ -15,7 +15,7 @@ static void usb_device_task(void *param) {
   tusb_init();
   while (1) {
     tud_task();
-    vTaskDelay(pdMS_TO_TICKS(100));
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 

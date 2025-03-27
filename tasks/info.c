@@ -2,9 +2,9 @@
 #include <pico/stdlib.h>
 #include <stdio.h>
 #include <task.h>
-#include <tasks/info_task.h>
+#include <tasks/info.h>
 
-#define STACK_SIZE 1024
+#define STACK_SIZE configMINIMAL_STACK_SIZE
 
 static StaticTask_t xTaskBuffer;
 static StackType_t xStack[STACK_SIZE];
@@ -19,6 +19,8 @@ static void info_task(void *pvParameters) {
   while (1) {
     printf("Running FreeRTOS version: %s (on Core %u)\n",
            tskKERNEL_VERSION_NUMBER, get_core_num());
+    UBaseType_t free_words = uxTaskGetStackHighWaterMark(NULL);
+    printf("Stack usage: %u words free\n", free_words);
     // gpio_put(LED_PIN, con);
     // con = !con;
     vTaskDelay(pdMS_TO_TICKS(1000));

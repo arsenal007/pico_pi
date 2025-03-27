@@ -54,8 +54,10 @@ if(TARGET tinyusb_device)
     add_executable(${CMAKE_PROJECT_NAME}
         ${CMAKE_SOURCE_DIR}/main.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/usb-descriptors.c
-        ${CMAKE_SOURCE_DIR}/tasks/usb_device_task.c
-        ${CMAKE_SOURCE_DIR}/tasks/info_task.c
+        ${CMAKE_SOURCE_DIR}/tasks/usb_device.c
+        ${CMAKE_SOURCE_DIR}/tasks/info.c
+        ${CMAKE_SOURCE_DIR}/tasks/usb_cdc_0.c
+        ${CMAKE_SOURCE_DIR}/tasks/usb_cdc_1.c
     )
 
     # pull in common dependencies
