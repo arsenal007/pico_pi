@@ -54,6 +54,8 @@ if(TARGET tinyusb_device)
     add_executable(${CMAKE_PROJECT_NAME}
         ${CMAKE_SOURCE_DIR}/main.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/usb-descriptors.c
+        ${CMAKE_SOURCE_DIR}/usb_cdc/connected.c
+        ${CMAKE_SOURCE_DIR}/usb_cdc/parce_command.c
         ${CMAKE_SOURCE_DIR}/tasks/usb_device.c
         ${CMAKE_SOURCE_DIR}/tasks/info.c
         ${CMAKE_SOURCE_DIR}/tasks/usb_cdc_0.c
@@ -66,7 +68,7 @@ if(TARGET tinyusb_device)
         hardware_flash
         tinyusb_device
         pico_bootrom
-        FreeRTOS-Kernel-Static
+        FreeRTOS-Kernel-Heap4
     )
 
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
