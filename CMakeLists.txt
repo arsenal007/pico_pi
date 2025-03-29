@@ -68,6 +68,7 @@ if(TARGET tinyusb_device)
         hardware_flash
         tinyusb_device
         pico_bootrom
+        hardware_i2c
         FreeRTOS-Kernel-Heap4
     )
 
