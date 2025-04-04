@@ -49,10 +49,31 @@ include_directories(${FREERTOS_INCLUDE_DIR})
 include_directories(${FREERTOS_PORT_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR})
 
+include(ExternalProject)
+
+ExternalProject_Add(
+    libcat
+    PREFIX ${CMAKE_BINARY_DIR}/dependencies
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/dependencies/src/libcat
+    SOURCE_SUBDIR source
+    BINARY_DIR ${CMAKE_BINARY_DIR}/dependencies/build/libcat
+    GIT_REPOSITORY git@github.com:arsenal007/libcat.git
+    GIT_TAG main
+    CMAKE_ARGS
+    -DARM_CORTEX_M0PLUS=ON
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/dependencies/install/libcat
+    BUILD_ALWAYS ON
+    BUILD_BYPRODUCTS ${CMAKE_BINARY_DIR}/dependencies/install/libcat/lib/libcat.a
+)
+
 # Add executable. Default name is the project name, version 0.1
 if(TARGET tinyusb_device)
-    add_executable(${CMAKE_PROJECT_NAME}
+    add_executable(${CMAKE_PROJECT_NAME})
+
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/main.c
+        ${CMAKE_SOURCE_DIR}/hardware/AT24C01.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/usb-descriptors.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/connected.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/parce_command.c
@@ -64,6 +85,7 @@ if(TARGET tinyusb_device)
 
     # pull in common dependencies
     target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE
         pico_stdlib
         hardware_flash
         tinyusb_device
@@ -76,13 +98,29 @@ if(TARGET tinyusb_device)
         PICO_ENTER_USB_BOOT_ON_EXIT=1
     )
 
+    add_dependencies(${CMAKE_PROJECT_NAME} libcat)
+
+    set(LIBCAT_INSTALL_DIR ${CMAKE_BINARY_DIR}/dependencies/install/libcat)
+
+    add_library(libcat_static STATIC IMPORTED GLOBAL)
+
+    set_target_properties(libcat_static PROPERTIES
+        IMPORTED_LOCATION ${LIBCAT_INSTALL_DIR}/lib/libcat.a
+        INTERFACE_INCLUDE_DIRECTORIES ${LIBCAT_INSTALL_DIR}/include
+    )
+
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE
+        libcat_static
+    )
+
     pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)
     pico_enable_stdio_uart(${CMAKE_PROJECT_NAME} 1)
 
     # create map/bin/hex/uf2 file etc.
     pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
 
-    # add url via pico_set_program_url
+# add url via pico_set_program_url
 elseif(PICO_ON_DEVICE)
     message("Skipping hello_serial because TinyUSB submodule is not initialized in the SDK")
 endif()
