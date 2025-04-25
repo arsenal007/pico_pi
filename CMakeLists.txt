@@ -77,6 +77,7 @@ if(TARGET tinyusb_device)
         ${CMAKE_SOURCE_DIR}/usb_cdc/usb-descriptors.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/connected.c
         ${CMAKE_SOURCE_DIR}/usb_cdc/parce_command.c
+        ${CMAKE_SOURCE_DIR}/usb_cdc/cat_answer.c
         ${CMAKE_SOURCE_DIR}/tasks/usb_device.c
         ${CMAKE_SOURCE_DIR}/tasks/info.c
         ${CMAKE_SOURCE_DIR}/tasks/usb_cdc_0.c

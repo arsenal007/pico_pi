@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "compare": "cpp",
-        "functional": "c"
+        "functional": "c",
+        "libcat.h": "c"
     }
 }
